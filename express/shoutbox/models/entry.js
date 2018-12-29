@@ -2,6 +2,17 @@ const redis = require('redis');
 // 创建redis客户端实例
 const db = redis.createClient();
 class Entry {
+  static getRange(from, to, cb) {
+    // 用于获取消息记录
+    db.lrange('entries', from, to, (err, items) => {
+      if (err) return cb(err);
+      let entries = [];
+      items.forEach((item) => {
+        // 解码之前保存为JSON的消息记录
+        entries.push(JSON.parse(item));
+      });
+    });
+  }
   constructor(obj) {
     // 循环遍历传入对象汇总的键
     for (let key in obj) {
